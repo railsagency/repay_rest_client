@@ -1,0 +1,53 @@
+= Repay Rest Client
+
+This gem will allow us to make requests to the Repay rest API from any project quickly
+
+== Installation
+
+Add this line to your application's Gemfile:
+
+  $ gem 'repay-rest-client-ruby', :git => 'https://github.com/ldstudios/repay_rest_client.git'
+
+And then execute:
+  $ bundle
+
+== Usage
+
+===Acquire an ach_token
+  $ Repay::AchToken.new(customer_id, account_holder_name, routing_number, account_number).ach_token
+e.g.
+  $ Repay::AchToken.new("123", "Rick Sanchez", "121202221", "1234567812345678").ach_token
+result will just be a string containing the ach_token returned from the API
+* you must have the following environment variables set:
+  * REPAY_API_TOKEN
+  * REPAY_REST_BASE
+* result should just be a string containing the ach_token returned from the API
+
+===Use an ach_token to post payment
+  $ Repay::AchTokenPayment.new(ach_token, customer_id, amount).payment
+e.g.
+  $ Repay::AchTokenPayment.new("5068", "123", "2.22").payment
+
+result will be a ruby hash parsed from JSON similar to this:
+```ruby
+  {"auth_code"=>"DEMO323",
+   "details"=>nil,
+   "message"=>"Approved - DEMO",
+   "pn_ref"=>"148595274",
+   "receipt_id"=>"148595274.VHJ9-OHFqYAelhdit-HmPPEKBtExcV3RMxlTEcZNL8jXZTXEKqVAI8kWx0-DqjvvTvyH0m1rzYRkfOBJ94SxHw",
+   "description"=>nil,
+   "code"=>"OK",
+   "error"=>"APPROVED",
+   "payment_method_detail"=>
+    {"gateway_mid"=>"8638", "routing_number"=>"121202221", "bank_name"=>"", "name_on_check"=>"Jerry Smith", "account_last_four"=>"1812", "ach_account_type"=>"Checking"},
+   "success_data"=>[],
+   "result"=>"0"}
+```
+* you must have the following environment variables set:
+  * REPAY_API_TOKEN
+  * REPAY_REST_BASE
+* amount must be an even number when using a test repay setup
+
+== License
+
+The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
