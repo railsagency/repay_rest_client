@@ -22,7 +22,9 @@ module Repay
         "amount" => amount,
         "customer_id" => "#{@customer_id}",
         "transaction_type" => "sale",
-        "ach_token" => @ach_token
+        "ach_token" => @ach_token,
+        "convenience_fee" => "0.00",
+        "payment_type" => "recurring"
       }
     end
 

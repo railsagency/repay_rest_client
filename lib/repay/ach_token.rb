@@ -23,7 +23,9 @@ module Repay
       @session_params ||= {
         "amount" => "0.00",
         "customer_id" => "#{@customer_id}",
-        "transaction_type" => "sale"
+        "transaction_type" => "sale",
+        "convenience_fee" => "0.00",
+        "payment_type" => "recurring"
       }
     end
 
