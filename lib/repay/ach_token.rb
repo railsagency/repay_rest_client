@@ -50,8 +50,12 @@ module Repay
       #this (hopefully) gives us a token we can use indefinitely to pull/post payments
       return nil unless session_token
       url = "#{ENV['REPAY_REST_BASE']}/checkout/merchant/api/v1/checkout-forms/#{checkout_form_id}/token-payment"
-      @ach_request ||= RestClient.post url, token_params(session_token).to_json, { :content_type => "application/json"}.merge(@auth_header)
-      return nil if @ach_request.code != 200
+      begin
+        @ach_request ||= RestClient.post url, token_params(session_token).to_json, { :content_type => "application/json"}.merge(@auth_header)
+      rescue => e
+        pp "ERROR, routing#: #{@routing_number}, #{JSON.parse(e.response.body)['errors'].first['description']}"
+        return nil
+      end
       @ach_token ||= JSON.parse(@ach_request.body)["saved_payment_method"]["token"]
     end
 

@@ -24,6 +24,21 @@ class RepayTest < ActiveSupport::TestCase
 
   end
 
+  test "aquire ach_token with invalid routing number" do
+    VCR.use_cassette('repay/form_id_request', :allow_playback_repeats => true) do
+      VCR.use_cassette('repay/paytoken_request', :allow_playback_repeats => true) do
+        VCR.use_cassette('repay/vault_token_request', :allow_playback_repeats => true) do
+          customer_id = "123"
+          account_holder = "Jerry Smith"
+          account_number = "00000005509214111112"
+          routing_number = "xxxxxxxxxxx"
+          assert_nil(Repay::AchToken.new(customer_id, account_holder, routing_number, account_number).ach_token)
+        end
+      end
+    end
+
+  end
+
   test "use ach_token to make payment" do
     VCR.use_cassette('repay/second_form_id_request', :allow_playback_repeats => true) do
       VCR.use_cassette('repay/second_paytoken_request', :allow_playback_repeats => true) do
