@@ -12,8 +12,8 @@ module Repay
       }.freeze
       @form_id_ep = "#{ENV['REPAY_REST_BASE']}/checkout/merchant/api/v1/checkout".freeze
       @form_id_params = {
-        "payment_method"=> "ach",
-        "StorePayment"=> "true"
+        "payment_method" => "ach",
+        "StorePayment"   => "true"
       }
 
       @customer_id    ||= funding_package_id
@@ -21,11 +21,11 @@ module Repay
       @routing_number ||= routing_number
       @account_number ||= account_number
       @session_params ||= {
-        "amount" => "0.00",
-        "customer_id" => "#{@customer_id}",
+        "amount"           => "0.00",
+        "customer_id"      => "#{@customer_id}",
         "transaction_type" => "sale",
-        "convenience_fee" => "0.00",
-        "payment_type" => "recurring"
+        "convenience_fee"  => "0.00",
+        "payment_type"     => "recurring"
       }
     end
 
@@ -61,14 +61,17 @@ module Repay
 
     def token_params(session)
       @token_params ||= {
-        "amount" => "0.00", #must be this amount for testing purposes
-        "name_on_check" => "#{@account_holder}",
-        "ach_account_number" => "#{@account_number}",
-        "ach_routing_number" => "#{@routing_number}",
-        "customer_id" => "#{@customer_id}",
-        "transaction_type" => "sale",
+        "amount"              => "0.00", #must be this amount for testing purposes
+        "name_on_check"       => "#{@account_holder}",
+        "ach_account_number"  => "#{@account_number}",
+        "ach_routing_number"  => "#{@routing_number}",
+        "customer_id"         => "#{@customer_id}",
+        "transaction_type"    => "sale",
         "save_payment_method" => "true",
-        "paytoken" => "#{session}"
+        "paytoken"            => "#{session}",
+        "convenience_fee"     => "0.00",
+        "payment_type"        => "recurring"
+
       }
     end
 

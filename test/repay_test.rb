@@ -16,7 +16,7 @@ class RepayTest < ActiveSupport::TestCase
           customer_id = "123"
           account_holder = "Jerry Smith"
           account_number = "00000005509214111112"
-          routing_number = "121202221"
+          routing_number = "061113415"
           assert_not_nil(Repay::AchToken.new(customer_id, account_holder, routing_number, account_number).ach_token)
         end
       end
@@ -30,7 +30,7 @@ class RepayTest < ActiveSupport::TestCase
         VCR.use_cassette('repay/vault_token_request', :allow_playback_repeats => true) do
           customer_id = "123"
           account_holder = "Jerry Smith"
-          account_number = "00000005509214111112"
+          account_number = "123591024112"
           routing_number = "xxxxxxxxxxx"
           assert_nil(Repay::AchToken.new(customer_id, account_holder, routing_number, account_number).ach_token)
         end
@@ -45,8 +45,8 @@ class RepayTest < ActiveSupport::TestCase
         VCR.use_cassette('repay/second_vault_token_request', :allow_playback_repeats => true) do
           @customer_id = "123"
           account_holder = "Jerry Smith"
-          account_number = "000000666666012841812"
-          routing_number = "121202221"
+          account_number = "123591024112"
+          routing_number = "061113415"
           @ach_token = Repay::AchToken.new(@customer_id, account_holder, routing_number, account_number).ach_token
         end
       end
