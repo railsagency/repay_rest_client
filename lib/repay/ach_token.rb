@@ -71,7 +71,6 @@ module Repay
         "paytoken"            => "#{session}",
         "convenience_fee"     => "0.00",
         "payment_type"        => "recurring"
-
       }
     end
 

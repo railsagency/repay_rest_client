@@ -58,7 +58,9 @@ module Repay
         "customer_id" => "#{@customer_id}",
         "ach_token" => "#{@ach_token}",
         "transaction_type" => "sale",
-        "paytoken" => "#{session}"
+        "paytoken" => "#{session}",
+        "convenience_fee" => "0.00",
+        "payment_type" => "recurring"
       }
     end
 
