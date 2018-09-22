@@ -36,7 +36,7 @@ module Repay
         return nil if @session_request.code != 200
         @session_token ||= JSON.parse(@session_request.body)["paytoken"]
       rescue => e
-        Errorlogger.new(e, @session_params).paytoken_initial_store_error
+        ErrorLogger.new(e, @session_params).paytoken_initial_store_error
         return nil
       end
     end
