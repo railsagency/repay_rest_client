@@ -10,11 +10,12 @@ module Repay
       @auth_header = {
         "Authorization" => "apptoken #{ENV['REPAY_API_TOKEN']}"
       }.freeze
-      @form_id_ep = "#{ENV['REPAY_REST_BASE']}/checkout/merchant/api/v1/checkout".freeze
-      @form_id_params = {
-        "payment_method"=> "ach_token",
-        "StorePayment"=> "true"
-      }
+      # @form_id_ep = "#{ENV['REPAY_REST_BASE']}/checkout/merchant/api/v1/checkout".freeze
+      # @form_id_params = {
+      #   "payment_method"=> "ach_token",
+      #   "StorePayment"=> "true"
+      # }
+      @form_id = ENV['REPAY_USE_STORED_ACH_FORM_ID']
       @customer_id    ||= customer_id
       @ach_token      ||= ach_token
       @amount         ||= amount
@@ -30,9 +31,9 @@ module Repay
 
     def checkout_form_id
       # we don't think this changes, but its less brittle if we fetch it every time
-      @form_id_request ||= RestClient.post @form_id_ep, @form_id_params.to_json, { :content_type => "application/json"}.merge(@auth_header)
-      return nil unless @form_id_request.code == 200
-      @checkout_form_id ||= JSON.parse(@form_id_request.body)['checkout_form_id']
+      # @form_id_request ||= RestClient.post @form_id_ep, @form_id_params.to_json, { :content_type => "application/json"}.merge(@auth_header)
+      # return nil unless @form_id_request.code == 200
+      # @checkout_form_id ||= JSON.parse(@form_id_request.body)['checkout_form_id']
     end
 
     def session_token

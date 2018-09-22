@@ -21,6 +21,9 @@ result will just be a string containing the ach_token returned from the API
 * you must have the following environment variables set:
   * REPAY_API_TOKEN
   * REPAY_REST_BASE
+  * REPAY_SAVE_ACH_TOKEN
+  * REPAY_USE_STORED_ACH_TOKEN
+  
 * result should just be a string containing the ach_token returned from the API
 
 ===Use an ach_token to post payment
