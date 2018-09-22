@@ -10,11 +10,7 @@ module Repay
       @auth_header = {
         "Authorization" => "apptoken #{ENV['REPAY_API_TOKEN']}"
       }.freeze
-      # @form_id_ep = "#{ENV['REPAY_REST_BASE']}/checkout/merchant/api/v1/checkout".freeze
-      # @form_id_params = {
-      #   "payment_method"=> "ach_token",
-      #   "StorePayment"=> "true"
-      # }
+
       @form_id = ENV['REPAY_USE_STORED_ACH_FORM_ID']
       @customer_id    ||= customer_id
       @ach_token      ||= ach_token
@@ -29,28 +25,32 @@ module Repay
       }
     end
 
-    def checkout_form_id
-      # we don't think this changes, but its less brittle if we fetch it every time
-      # @form_id_request ||= RestClient.post @form_id_ep, @form_id_params.to_json, { :content_type => "application/json"}.merge(@auth_header)
-      # return nil unless @form_id_request.code == 200
-      # @checkout_form_id ||= JSON.parse(@form_id_request.body)['checkout_form_id']
-    end
-
     def session_token
       #this is basically a mutex, if someone else makes this request, mine will no longer work for transactions
-      return nil unless checkout_form_id
-      url = "#{ENV['REPAY_REST_BASE']}/checkout/merchant/api/v1/checkout-forms/#{checkout_form_id}/paytoken"
-      @session_request ||= RestClient.post url, @session_params.to_json, { :content_type => "application/json"}.merge(@auth_header)
-      return nil if @session_request.code != 200
-      @session_token ||= JSON.parse(@session_request.body)["paytoken"]
+      return nil unless @form_id
+      url = "#{ENV['REPAY_REST_BASE']}/checkout/merchant/api/v1/checkout-forms/#{@form_id}/paytoken"
+      begin
+        @session_request ||= RestClient.post url, @session_params.to_json, { :content_type => "application/json"}.merge(@auth_header)
+        return nil if @session_request.code != 200
+        @session_token ||= JSON.parse(@session_request.body)["paytoken"]
+      rescue => e
+        ErrorLogger.new(e, @session_params).paytoken_use_ach_error
+        return nil
+      end
     end
 
     def payment
       return nil unless session_token
-      url = "#{ENV['REPAY_REST_BASE']}/checkout/merchant/api/v1/checkout-forms/#{checkout_form_id}/token-payment"
-      @ach_request ||= RestClient.post url, payment_params(session_token).to_json, { :content_type => "application/json"}.merge(@auth_header)
-      return nil if @ach_request.code != 200
-      @payment ||= JSON.parse(@ach_request.body)
+      url = "#{ENV['REPAY_REST_BASE']}/checkout/merchant/api/v1/checkout-forms/#{@form_id}/token-payment"
+      begin
+        @ach_request ||= RestClient.post url, payment_params(session_token).to_json, { :content_type => "application/json"}.merge(@auth_header)
+        return nil if @ach_request.code != 200
+        @payment ||= JSON.parse(@ach_request.body)
+      rescue => e
+        binding.pry
+        ErrorLogger.new(e, payment_params(session_token)).use_ach_token_error
+        return nil
+      end
     end
 
     def payment_params(session)

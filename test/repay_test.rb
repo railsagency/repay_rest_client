@@ -15,7 +15,7 @@ class RepayTest < ActiveSupport::TestCase
         VCR.use_cassette('repay/vault_token_request', :allow_playback_repeats => true) do
           customer_id = "123"
           account_holder = "Jerry Smith"
-          account_number = "00000005509214111112"
+          account_number = "0000000550921411111125222"
           routing_number = "061113415"
           assert_not_nil(Repay::AchToken.new(customer_id, account_holder, routing_number, account_number).ach_token)
         end
@@ -25,12 +25,12 @@ class RepayTest < ActiveSupport::TestCase
   end
 
   test "aquire ach_token with invalid routing number" do
-    VCR.use_cassette('repay/form_id_request', :allow_playback_repeats => true) do
-      VCR.use_cassette('repay/paytoken_request', :allow_playback_repeats => true) do
-        VCR.use_cassette('repay/vault_token_request', :allow_playback_repeats => true) do
+    VCR.use_cassette('repay/form_id_request_a', :allow_playback_repeats => true) do
+      VCR.use_cassette('repay/paytoken_request_a', :allow_playback_repeats => true) do
+        VCR.use_cassette('repay/vault_token_request_a', :allow_playback_repeats => true) do
           customer_id = "123"
           account_holder = "Jerry Smith"
-          account_number = "123591024112"
+          account_number = "0001230012351252"
           routing_number = "xxxxxxxxxxx"
           assert_nil(Repay::AchToken.new(customer_id, account_holder, routing_number, account_number).ach_token)
         end
@@ -40,22 +40,21 @@ class RepayTest < ActiveSupport::TestCase
   end
 
   test "use ach_token to make payment" do
-    VCR.use_cassette('repay/second_form_id_request', :allow_playback_repeats => true) do
-      VCR.use_cassette('repay/second_paytoken_request', :allow_playback_repeats => true) do
-        VCR.use_cassette('repay/second_vault_token_request', :allow_playback_repeats => true) do
-          @customer_id = "123"
+    VCR.use_cassette('repay/form_id_request_b', :allow_playback_repeats => true) do
+      VCR.use_cassette('repay/paytoken_request_b', :allow_playback_repeats => true) do
+        VCR.use_cassette('repay/vault_token_request_b', :allow_playback_repeats => true) do
+          @customer_id = "321"
           account_holder = "Jerry Smith"
-          account_number = "123591024112"
+          account_number = "1351252251200000"
           routing_number = "061113415"
           @ach_token = Repay::AchToken.new(@customer_id, account_holder, routing_number, account_number).ach_token
         end
       end
     end
-    VCR.use_cassette('repay/ach_payment_form_id_request', :allow_playback_repeats => true) do
-      VCR.use_cassette('repay/ach_payment_paytoken_request', :allow_playback_repeats => true) do
-        VCR.use_cassette('repay/ach_payment', :allow_playback_repeats => true) do
-          amount = random_amount
-          r = Repay::AchTokenPayment.new(@ach_token, @customer_id, amount).payment
+    VCR.use_cassette('repay/ach_payment_form_id_request_a', :allow_playback_repeats => true) do
+      VCR.use_cassette('repay/ach_payment_paytoken_request_a', :allow_playback_repeats => true) do
+        VCR.use_cassette('repay/ach_payment_a', :allow_playback_repeats => true) do
+          r = Repay::AchTokenPayment.new(@ach_token, @customer_id, random_amount).payment
           assert_equal(r["message"],"Approved - DEMO")
         end
       end
