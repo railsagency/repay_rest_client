@@ -22,7 +22,6 @@ module Repay
     end
 
     def paytoken_use_ach_error
-      binding.pry
       pp "xxxx Repay Client ERROR ( PayToken: for existing ach info ) ==> #{specific_error}"
       detail
     end

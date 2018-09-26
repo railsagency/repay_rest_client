@@ -54,11 +54,23 @@ class RepayTest < ActiveSupport::TestCase
     VCR.use_cassette('repay/ach_payment_form_id_request_a', :allow_playback_repeats => true) do
       VCR.use_cassette('repay/ach_payment_paytoken_request_a', :allow_playback_repeats => true) do
         VCR.use_cassette('repay/ach_payment_a', :allow_playback_repeats => true) do
-          r = Repay::AchTokenPayment.new(@ach_token, @customer_id, random_amount).payment
-          assert_equal(r["message"],"Approved - DEMO")
+          amount = random_amount
+          r1 = Repay::AchTokenPayment.new(@ach_token, @customer_id, amount.to_s).payment
         end
       end
     end
+
+    assert_equal(r1["message"],"Approved - DEMO")
+
+    VCR.use_cassette('repay/ach_payment_form_id_request_a', :allow_playback_repeats => true) do
+      VCR.use_cassette('repay/ach_payment_paytoken_request_a', :allow_playback_repeats => true) do
+        VCR.use_cassette('repay/ach_payment_a', :allow_playback_repeats => true) do
+          r2 = Repay::AchTokenPayment.new(@ach_token, @customer_id, amount).payment
+        end
+      end
+    end
+
+    assert_equal(r2["message"],"Approved - DEMO")
   end
 
   def random_amount
@@ -68,6 +80,6 @@ class RepayTest < ActiveSupport::TestCase
     b % 2 == 0 ? b : b += 1
     c = rand(9)
     c % 2 == 0 ? c : c += 1
-    return "#{a}.#{b}#{c}"
+    return Money.new("#{a}#{b}#{c}".to_i)
   end
 end

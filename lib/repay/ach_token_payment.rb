@@ -14,7 +14,7 @@ module Repay
       @form_id = ENV['REPAY_USE_STORED_ACH_FORM_ID']
       @customer_id    ||= customer_id
       @ach_token      ||= ach_token
-      @amount         ||= amount
+      @amount         ||= amount.to_s #makes it possible to pass Money type for this param
       @session_params ||= {
         "amount" => amount,
         "customer_id" => "#{@customer_id}",
@@ -47,7 +47,6 @@ module Repay
         return nil if @ach_request.code != 200
         @payment ||= JSON.parse(@ach_request.body)
       rescue => e
-        binding.pry
         ErrorLogger.new(e, payment_params(session_token)).use_ach_token_error
         return nil
       end
