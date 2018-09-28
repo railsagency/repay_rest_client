@@ -24,14 +24,15 @@ result will just be a string containing the ach_token returned from the API
   * REPAY_SAVE_ACH_FORM_ID
   * REPAY_USE_STORED_ACH_FORM_ID
 
-* result should just be a string containing the ach_token returned from the API
+* successful result should just be a string containing the ach_token returned from the API
+* unsuccessful result will be simply nil
 
 ===Use an ach_token to post payment
   $ Repay::AchTokenPayment.new(ach_token, customer_id, amount).payment
 e.g.
   $ Repay::AchTokenPayment.new("5068", "123", "2.22").payment
 
-result will be a ruby hash parsed from JSON similar to this:
+successful result will be a ruby hash parsed from JSON similar to this:
 ```ruby
   {"auth_code"=>"DEMO323",
    "details"=>nil,
@@ -46,6 +47,12 @@ result will be a ruby hash parsed from JSON similar to this:
    "success_data"=>[],
    "result"=>"0"}
 ```
+
+unsuccessful result will be a ruby hash parsed from json similar to this:
+```
+{"status"=>"error", "errors"=>[{"description"=>"Decline - DEMO - ResultCode: 12 - AuthCode: ", "name"=>"12", "location"=>"gateway_error"}]}
+```
+
 * you must have the following environment variables set:
   * REPAY_API_TOKEN
   * REPAY_REST_BASE

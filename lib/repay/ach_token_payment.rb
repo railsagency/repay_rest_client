@@ -16,7 +16,7 @@ module Repay
       @ach_token      ||= ach_token
       @amount         ||= amount.to_s #makes it possible to pass Money type for this param
       @session_params ||= {
-        "amount" => amount,
+        "amount" => amount.to_s,
         "customer_id" => "#{@customer_id}",
         "transaction_type" => "sale",
         "ach_token" => @ach_token,
@@ -44,17 +44,21 @@ module Repay
       url = "#{ENV['REPAY_REST_BASE']}/checkout/merchant/api/v1/checkout-forms/#{@form_id}/token-payment"
       begin
         @ach_request ||= RestClient.post url, payment_params(session_token).to_json, { :content_type => "application/json"}.merge(@auth_header)
-        return nil if @ach_request.code != 200
-        @payment ||= JSON.parse(@ach_request.body)
+        unless @ach_request.code == 200
+          pp 'not a bad request, but also not 200 *face-palm'
+          return nil
+        else
+          return @payment ||= JSON.parse(@ach_request.body)
+        end
       rescue => e
         ErrorLogger.new(e, payment_params(session_token)).use_ach_token_error
-        return nil
+        return JSON.parse(e.response.body)
       end
     end
 
     def payment_params(session)
       @payment_params ||= {
-        "amount" => @amount, #must be this amount for testing purposes
+        "amount" => @amount,
         "customer_id" => "#{@customer_id}",
         "ach_token" => "#{@ach_token}",
         "transaction_type" => "sale",
