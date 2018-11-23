@@ -6,7 +6,7 @@
   #    customer_id
 module Repay
   class AchToken
-    def initialize funding_package_id, account_holder, routing_number, account_number
+    def initialize funding_package_id, account_holder, routing_number, account_number, zip_code
       @auth_header = {
         "Authorization" => "apptoken #{ENV['REPAY_API_TOKEN']}"
       }.freeze
@@ -14,6 +14,7 @@ module Repay
       @form_id = ENV['REPAY_SAVE_ACH_FORM_ID']
       @customer_id    ||= funding_package_id
       @account_holder ||= account_holder
+      @zip_code       ||= zip_code
       @routing_number ||= routing_number
       @account_number ||= account_number
       @session_params ||= {
@@ -61,6 +62,7 @@ module Repay
         "ach_account_number"  => "#{@account_number}",
         "ach_routing_number"  => "#{@routing_number}",
         "customer_id"         => "#{@customer_id}",
+        "address_zip"         => "#{@zip_code}",
         "transaction_type"    => "sale",
         "save_payment_method" => "true",
         "paytoken"            => "#{session}",

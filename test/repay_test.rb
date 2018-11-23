@@ -11,33 +11,36 @@ class RepayTest < ActiveSupport::TestCase
   end
 
   test "aquire ach_token" do
-    VCR.use_cassette('repay/vault_token_request_1', :allow_playback_repeats => true) do
+    VCR.use_cassette('repay/vault_token_request_a', :allow_playback_repeats => true) do
       customer_id = "123"
       account_holder = "Jerry Smith"
-      account_number = "0012500550921411111125222"
+      account_number = "0001125222"
       routing_number = "061113415"
-      assert_not_nil(Repay::AchToken.new(customer_id, account_holder, routing_number, account_number).ach_token)
+      zip_code = "30506"
+      assert_not_nil(Repay::AchToken.new(customer_id, account_holder, routing_number, account_number, zip_code).ach_token)
     end
 
   end
 
   test "aquire ach_token with invalid routing number" do
-    VCR.use_cassette('repay/invalid_vault_token_request', :allow_playback_repeats => true) do
+    VCR.use_cassette('repay/invalid_vault_token_request_a', :allow_playback_repeats => true) do
       customer_id = "123"
       account_holder = "Jerry Smith"
       account_number = "0001230012351252"
       routing_number = "xxxxxxxxxxx"
-      assert_nil(Repay::AchToken.new(customer_id, account_holder, routing_number, account_number).ach_token)
+      zip_code = "30506"
+      assert_nil(Repay::AchToken.new(customer_id, account_holder, routing_number, account_number, zip_code).ach_token)
     end
   end
 
   test "use ach_token to make payment" do
-    VCR.use_cassette('repay/vault_token_request_2', :allow_playback_repeats => true) do
+    VCR.use_cassette('repay/vault_token_request_b', :allow_playback_repeats => true) do
       @customer_id = "321"
       account_holder = "Jerry Smith"
       account_number = "13512522500110032500"
       routing_number = "061113415"
-      @ach_token = Repay::AchToken.new(@customer_id, account_holder, routing_number, account_number).ach_token
+      zip_code = "30506"
+      @ach_token = Repay::AchToken.new(@customer_id, account_holder, routing_number, account_number, zip_code).ach_token
     end
 
     @amount = random_amount
