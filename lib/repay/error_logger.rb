@@ -35,7 +35,7 @@ module Repay
       body = JSON.parse(@e.response.body)
       name = body['errors'].first['name']
       description = body['errors'].first['description']
-      error_detail = [name,description].reject{|element| element.empty?}.join(": ")
+      error_detail = [name,description].reject{|element| element.nil? || element.empty?}.join(": ")
       return error_detail
     end
 
