@@ -14,9 +14,9 @@ And then execute:
 == Usage
 
 ===Acquire an ach_token
-  $ Repay::AchToken.new(customer_id, account_holder_name, routing_number, account_number).ach_token
+  $ Repay::AchToken.new(customer_id, account_holder_name, routing_number, account_number, zip_code).ach_token
 e.g.
-  $ Repay::AchToken.new("123", "Rick Sanchez", "121202221", "1234567812345678").ach_token
+  $ Repay::AchToken.new("123", "Rick Sanchez", "121202221", "1234567812345678", "30506").ach_token
 result will just be a string containing the ach_token returned from the API
 * you must have the following environment variables set:
   * REPAY_API_TOKEN
