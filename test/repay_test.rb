@@ -14,7 +14,7 @@ class RepayTest < ActiveSupport::TestCase
     VCR.use_cassette('repay/vault_token_request_a', :allow_playback_repeats => true) do
       customer_id = "123"
       account_holder = "Jerry Smith"
-      account_number = "00009091125222"
+      account_number = "000090911252122222222"
       routing_number = "061113415"
       zip_code = "30506"
       assert_not_nil(Repay::AchToken.new(customer_id, account_holder, routing_number, account_number, zip_code).ach_token)
@@ -26,7 +26,7 @@ class RepayTest < ActiveSupport::TestCase
     VCR.use_cassette('repay/invalid_vault_token_request_a', :allow_playback_repeats => true) do
       customer_id = "123"
       account_holder = "Jerry Smith"
-      account_number = "00012309900012351252"
+      account_number = "000123099000123540001252"
       routing_number = "xxxxxxxxxxx"
       zip_code = "30506"
       assert_nil(Repay::AchToken.new(customer_id, account_holder, routing_number, account_number, zip_code).ach_token)
@@ -37,7 +37,7 @@ class RepayTest < ActiveSupport::TestCase
     VCR.use_cassette('repay/vault_token_request_b', :allow_playback_repeats => true) do
       @customer_id = "321"
       account_holder = "Jerry Smith"
-      account_number = "135109990110032500"
+      account_number = "13510999011003250012122"
       routing_number = "061113415"
       zip_code = "30506"
       @ach_token = Repay::AchToken.new(@customer_id, account_holder, routing_number, account_number, zip_code).ach_token
